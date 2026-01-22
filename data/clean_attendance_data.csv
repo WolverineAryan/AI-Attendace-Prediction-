@@ -1,0 +1,11 @@
+Student_ID,Attendance_Percentage,Late_Days,Leaves,Final_Status
+101,92,2,1,Present
+102,85,5,3,Present
+103,60,12,8,Absent
+104,75,7,4,Present
+105,40,20,15,Absent
+106,88,3,2,Present
+107,55,15,10,Absent
+108,95,1,0,Present
+109,68,9,6,Present
+110,30,25,18,Absent
