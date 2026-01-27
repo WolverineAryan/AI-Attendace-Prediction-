@@ -80,12 +80,18 @@ if menu == "Overview":
 # EDA
 # ==================================================
 elif menu == "EDA Analysis":
-
+    df["Risk_Level"] = df["Attendance_Percentage"].apply(
+        lambda x:
+        "Safe" if x >= 85 else
+        "Medium" if x >= 75 else
+        "High"
+    )
     st.subheader("📈 Exploratory Data Analysis")
 
     fig, ax = plt.subplots()
     sns.countplot(x="Risk_Level", data=df, ax=ax)
     st.pyplot(fig)
+
 
 # ==================================================
 # PREDICTION
