@@ -5,20 +5,28 @@ import numpy as np
 
 app = Flask(__name__)
 
+# ✅ FULL CORS FIX
 CORS(
     app,
-    resources={r"/*": {"origins": "*"}},
+    origins=["http://localhost:3000"],
     supports_credentials=True
 )
 
 model = joblib.load("model/attendance_risk_model.pkl")
 
+
 @app.route("/")
 def home():
     return "AI Attendance Prediction Backend Running"
 
+
+# ✅ OPTIONS added (THIS IS THE KEY)
 @app.route("/predict", methods=["POST", "OPTIONS"])
 def predict():
+
+    if request.method == "OPTIONS":
+        return "", 200
+
     data = request.json
 
     attendance = float(data["attendance"])
@@ -49,9 +57,6 @@ def predict():
         "risk_reason": reason
     })
 
+
 if __name__ == "__main__":
     app.run()
-    prediction_map = {
-        0: "Safe",
-        1: "High Risk"
-    }
