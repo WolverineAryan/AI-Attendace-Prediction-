@@ -1,16 +1,9 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://attendance-backend.onrender.com",
-  timeout: 20000
+  baseURL: "https://ai-attendance-prediction.onrender.com",
+  timeout: 30000
 });
 
-export const predictAttendance = async (data) => {
-  try {
-    const res = await API.post("/predict", data);
-    return res;
-  } catch (err) {
-    console.error("API ERROR:", err);
-    throw err;
-  }
-};
+export const predictAttendance = (data) =>
+  API.post("/predict", data);
