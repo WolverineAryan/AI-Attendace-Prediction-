@@ -1,16 +1,17 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
 import joblib
 import numpy as np
 
 app = Flask(__name__)
 
-# ✅ FULL CORS FIX
-CORS(
-    app,
-    origins=["http://localhost:3000"],
-    supports_credentials=True
-)
+# ✅ MANUAL CORS FIX (100% WORKING)
+@app.after_request
+def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
+    response.headers["Access-Control-Allow-Methods"] = "GET,POST,OPTIONS"
+    return response
+
 
 model = joblib.load("model/attendance_risk_model.pkl")
 
@@ -20,10 +21,10 @@ def home():
     return "AI Attendance Prediction Backend Running"
 
 
-# ✅ OPTIONS added (THIS IS THE KEY)
 @app.route("/predict", methods=["POST", "OPTIONS"])
 def predict():
 
+    # ✅ handle browser preflight
     if request.method == "OPTIONS":
         return "", 200
 
