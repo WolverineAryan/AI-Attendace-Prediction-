@@ -1,10 +1,10 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import joblib
 import numpy as np
-from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)   # ← REQUIRED
 
 model = joblib.load("model/attendance_risk_model.pkl")
 
@@ -24,7 +24,6 @@ def predict():
     features = np.array([[attendance, late_days, leaves, discipline]])
     prediction = model.predict(features)[0]
 
-    # ---------- RISK LEVEL ----------
     if attendance >= 85:
         risk_level = "Safe"
     elif attendance >= 70:
@@ -32,7 +31,6 @@ def predict():
     else:
         risk_level = "High"
 
-    # ---------- RISK REASON ----------
     if attendance < 60:
         reason = "Very low attendance"
     elif leaves > 10:
@@ -42,9 +40,12 @@ def predict():
     elif discipline > 20:
         reason = "Poor discipline"
     else:
-        reason = "Normal attendance behavior"
+        reason = "Normal attendance"
 
     return jsonify({
         "risk_level": risk_level,
         "risk_reason": reason
     })
+
+if __name__ == "__main__":
+    app.run()
