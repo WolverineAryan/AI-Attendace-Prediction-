@@ -4,7 +4,12 @@ import joblib
 import numpy as np
 
 app = Flask(__name__)
-CORS(app)   # ← REQUIRED
+
+CORS(
+    app,
+    resources={r"/*": {"origins": "*"}},
+    supports_credentials=True
+)
 
 model = joblib.load("model/attendance_risk_model.pkl")
 
@@ -12,7 +17,7 @@ model = joblib.load("model/attendance_risk_model.pkl")
 def home():
     return "AI Attendance Prediction Backend Running"
 
-@app.route("/predict", methods=["POST"])
+@app.route("/predict", methods=["POST", "OPTIONS"])
 def predict():
     data = request.json
 
@@ -21,15 +26,12 @@ def predict():
     leaves = int(data["leaves"])
     discipline = int(data["discipline_score"])
 
-    features = np.array([[attendance, late_days, leaves, discipline]])
-    prediction = model.predict(features)[0]
-
     if attendance >= 85:
-        risk_level = "Safe"
+        risk = "Safe"
     elif attendance >= 70:
-        risk_level = "Medium"
+        risk = "Medium"
     else:
-        risk_level = "High"
+        risk = "High"
 
     if attendance < 60:
         reason = "Very low attendance"
@@ -43,9 +45,13 @@ def predict():
         reason = "Normal attendance"
 
     return jsonify({
-        "risk_level": risk_level,
+        "risk_level": risk,
         "risk_reason": reason
     })
 
 if __name__ == "__main__":
     app.run()
+    prediction_map = {
+        0: "Safe",
+        1: "High Risk"
+    }
